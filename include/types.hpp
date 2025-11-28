@@ -13,8 +13,10 @@ namespace NetSim
 
     /**
      * @brief Alias for probability (0.0 - 1.0)
-     */
-    using ProbabilityGenerator = std::function<double()>;
+     * wrapper for anything that's a funciton - takes no arguments and return 
+     * double
+     */ 
+    using ProbabilityGenerator = std::function<double()>;  
 
     /**
      * @brief Alias for amount of rounds
