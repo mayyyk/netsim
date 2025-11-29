@@ -1,8 +1,8 @@
-#include "package.hpp"
+#include "../include/package.hpp"
 
 namespace NetSim
 {
-    Package::Package(){id_ = 1}
+    Package::Package(){id_ = 1;}
 
     Package::Package(ElementID id) : id_(id)
     {

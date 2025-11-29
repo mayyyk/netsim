@@ -26,22 +26,24 @@ namespace NetSim
          * @brief Copy constructor
          * For creating packages that are equivalent to each other
          */
-        Package(const Package&) = default;
+        Package(const Package &) = default;
 
         /**
          * @brief Moving constructor
          */
-        Package(Package&&) = default;
+        Package(Package &&) = default; // && is moving semantics, prevents copying
 
         /**
          * @brief Copy operator
+         * This object can be safely copied
          */
-        Package& operator=(const Package&) = default;
+        Package &operator=(const Package &) = default;
 
         /**
          * @brief Moving operator
+         * This object can be safely moved
          */
-        Package& operator=(Package&&) = default;
+        Package &operator=(Package &&) = default; // && is moving semantics, prevents copying
 
         /**
          * @brief Read package ID
