@@ -24,8 +24,13 @@ namespace NetSim
     class IPackageStockpile
     {
     public:
+
+        // Constructor is not needed for the interface as it's purely virual and never initialized
+
         /**
          * @brief Always add destructor to polimorphic interfaces
+         * When derived class points to the base class and base class is destroyed
+         * it makes sure that derived class will be cleaned as well, prevent memory leak
          */
         virtual ~IPackageStockpile() {}
 
@@ -55,7 +60,8 @@ namespace NetSim
     public:
         /**
          * @brief Rethrievs an element from a queue
-         * Order depends on implmentation (FIFO/LIFO)
+         * Order depends on implmentation (FIFO/LIFO), implements IF statement (not ideally correct with OCP)
+         * It's better however to violate OCP than DRY principle
          * @return Package (product)
          */
         virtual Package pop() = 0;
@@ -79,18 +85,18 @@ namespace NetSim
          * @brief Constructor
          * @param type PackageQueueType (FIFO or LIFO)
          */
-        explicit PackageQueue(PackageQueueType type);
+        explicit PackageQueue(PackageQueueType type); // explicit block type conversion, so that constructor allows only PackageQueueType as an argument
 
-        void push(Package &&package) override;
+        void push(Package&& package) override; // Package&& so content of the package is fully moved, not just coppied
         bool empty() const override;
         size_t size() const override;
         Package pop() override;
         PackageQueueType get_queue_type() const override;
 
-        ~PackageQueue() override = default;
+        ~PackageQueue() override = default; // Name is different form IPackageQueue but 
 
     private:
-        PackageQueueType queue_type;
+        PackageQueueType queue_type_;
         std::deque<Package> deque_; // std::deque is ideal because it allows for fast access both from front and back side
     };
 
