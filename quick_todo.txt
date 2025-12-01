@@ -12,5 +12,31 @@ jak skonfiguorać config.hpp?
 
 czemu używamy unique_ptr w storehouse?
 
+czym różni się * od & np. w tym fragmencie kodu?IPackageReceiver* choose_receiver();
 
 
+
+        /**
+
+         * @brief Zwraca mapę preferencji (tylko do odczytu).
+
+         */
+
+        const preferences_t& get_preferences() const;?
+
+czemu jest auto& pair w pętlach for z preferencjes? czy to też przechowuje wskaźniki/referencje? czemu np. nie ma auto* pair? 
+
+co oznacza -> tutaj:     if(!preferences_.empty()) return preferences_.rbegin()->first;?
+
+jaka jest logika push_package w package sender? czyj jest bufer?
+
+
+
+
+
+CONSISTENT NAMING:
+- package/product
+
+SET BETTER AUTO FORMATTING
+
+READ AND CREATE UNDERSTANDABLE TESTS

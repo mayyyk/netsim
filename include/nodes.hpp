@@ -55,9 +55,11 @@ class ReceiverPreferences {
 
     /**
      * @brief Method for getting preferences map
+     * Returns reference to the map, not copy
      * @return all current links, in "read-only" mode
      */
-    const preferences_t &get_preferences() const;
+    const preferences_t & 
+    get_preferences() const; // & avoids copying the whole map object
 
     // Map iterators
     const_iterator begin() const;
@@ -66,7 +68,7 @@ class ReceiverPreferences {
     const_iterator cend() const;
 
   private:
-    preferences_t preferences_;
+    preferences_t preferences_; // map containing pointers and numbers
     ProbabilityGenerator pg_;
 };
 
@@ -96,11 +98,13 @@ class PackageSender {
      * @brief Method for getting receiver preferences
      * @returns receiver preferences
      */
-
-    const ReceiverPreferences &receiver_preferences() const;
+    const ReceiverPreferences &get_receiver_preferences() const;
 
     // Non-const version to be able to modify
-    ReceiverPreferences &receiver_preferences();
+    ReceiverPreferences &get_receiver_preferences();
+
+    // No destructor since both 'std::optional<Package>' and
+    // 'ReceiverPreferences' are intelligent and clean up after themselves
 
   protected:
     /**
@@ -110,7 +114,10 @@ class PackageSender {
     void push_package(Package &&package);
 
     std::optional<Package> buffer_; // Output buffer
-    ReceiverPreferences receiver_preferences_;
+    ReceiverPreferences
+        receiver_preferences_; // ReceriverPreferences instance, containing
+                               // preferences map for every object that derives
+                               // from PackageSender base class
 };
 
 /**
@@ -124,7 +131,7 @@ class IPackageReceiver {
     /**
      * @brief Handles receiving a product
      */
-    virtual void receive_product(Package &&p) = 0;
+    virtual void receive_package(Package &&p) = 0;
 
     /**
      * @brief Gets ID of a Node
@@ -142,12 +149,12 @@ class IPackageReceiver {
     virtual ~IPackageReceiver() = default;
 
 // Conditional method, for further stages
-#if (defined EXERCISE_ID && EXCERCISE_ID != EXERCISE_ID_NODES)
-    /**
-     * @brief Gets the type of a the receiver (Worker or Storehouse)
-     */
-    virtual ReceiverType get_receiver_type() const = 0;
-#endif
+// #if (defined EXERCISE_ID && EXCERCISE_ID != EXERCISE_ID_NODES)
+//     /**
+//      * @brief Gets the type of a the receiver (Worker or Storehouse)
+//      */
+//     virtual ReceiverType get_receiver_type() const = 0;
+// #endif
 };
 
 /**
@@ -157,11 +164,15 @@ class IPackageReceiver {
  */
 class Ramp : public PackageSender {
   public:
+    // No default constructor since it doesn't make sense for nodes to be empty
+
     /**
      * @brief Constructor setting id and offset (read from input file)
      * TimeOffset represents time between product deliveries
      */
-    Ramp(ElementID id, TimeOffset di);
+    explicit Ramp(ElementID id, TimeOffset di);
+    // explicit for clarity, but it's not necessary with multi-argument
+    // constructors, complilator will not convert types anyways
 
     /**
      * @brief Method for delivering goods with a set frequency
@@ -194,11 +205,12 @@ class Worker : public PackageSender, public IPackageReceiver {
     /**
      * @brief Constructor setting id, offset and queue type
      */
-    Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> q);
+    explicit Worker(ElementID id, TimeOffset pd,
+                    std::unique_ptr<IPackageQueue> q);
 
     // AS A RECEIVER
 
-    void receive_product(Package &&p) override;
+    void receive_package(Package &&p) override;
 
     // AS A WORKER
 
@@ -212,6 +224,11 @@ class Worker : public PackageSender, public IPackageReceiver {
     void do_work(Time t);
 
     // GETTERS
+
+    /**
+     * @brief Gets worker ID
+     */
+    ElementID get_id() const;
 
     /**
      * @brief Gets product processing duration
@@ -232,7 +249,7 @@ class Worker : public PackageSender, public IPackageReceiver {
   private:
     ElementID id_;
     TimeOffset processing_duration_;
-    Time product_processing_start_time_ = 0;
+    Time package_processing_start_time_ = 0;
 
     std::unique_ptr<IPackageQueue> q_; // Input queue
     std::optional<Package>
@@ -247,12 +264,15 @@ class Storehouse : public IPackageReceiver {
     /**
      * @brief Constructor assigning ID and the object storage type (default is
      * FIFO)
+     * @param id Unique Storehouse identifier
+     * @param d Unique pointer to the storage implementation (stockpile)
+     * Storehouse takes ownership of this pointer
      */
-    Storehouse(ElementID id,
-               std::unique_ptr<IPackageStockpile> d =
-                   std::make_unique<PackageQueue>(PackageQueueType::FIFO));
+    explicit Storehouse(ElementID id, std::unique_ptr<IPackageStockpile> d =
+                                          std::make_unique<PackageQueue>(
+                                              PackageQueueType::FIFO));
 
-    void receive_product(Package &&p) override;
+    void receive_package(Package &&p) override;
 
     ElementID get_id() const override;
 
@@ -264,7 +284,7 @@ class Storehouse : public IPackageReceiver {
 
   private:
     ElementID id_;
-    std::unique_ptr<IPackageStockpile> d_; // Container for packages?
+    std::unique_ptr<IPackageStockpile> d_; // Container for packages
 };
 
 } // namespace NetSim

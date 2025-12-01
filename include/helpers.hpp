@@ -15,6 +15,6 @@ double default_probability_generator();
 /**
  * @brief Declaringglobal object, which is a function
  */
-extern ProbabilityGenerator probability_generator;
+extern ProbabilityGenerator probability_generator; // extern means that this function is defined somethere else
 
 } // namespace NetSim
