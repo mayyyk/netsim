@@ -212,6 +212,8 @@ class Worker : public PackageSender, public IPackageReceiver {
 
     void receive_package(Package &&p) override;
 
+    ReceiverType get_receiver_type() const override;
+
     // AS A WORKER
 
     /**
@@ -273,6 +275,8 @@ class Storehouse : public IPackageReceiver {
                                               PackageQueueType::FIFO));
 
     void receive_package(Package &&p) override;
+
+    ReceiverType get_receiver_type() const override;
 
     ElementID get_id() const override;
 
