@@ -1,2 +1,16 @@
-- id handling
-- 
+czemu usuwamy słowa extern z funcki defaul_probablity_generator? 
+
+dlaczego jest preferences_t&? tak samo ReceiverPreferences&? czy chodzi o to, że map działa jak tablica i trzeba przekazać wskaźnik na pierwszy element?
+
+dlaczego w receiverpreferences ani ramp ani worker ani storeghouse nie definiujemy konstruktora domyślnego i nie ma explicit? 
+
+czym różni się receiver_preferences_ od preferences_?
+
+czemu packageSender nie ma destruktora?
+
+jak skonfiguorać config.hpp?
+
+czemu używamy unique_ptr w storehouse?
+
+
+
