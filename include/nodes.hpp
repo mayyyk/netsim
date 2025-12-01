@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.hpp"
+#include "factory.hpp"
 #include "helpers.hpp"
 #include "package.hpp"
 #include "storage_types.hpp"
@@ -11,6 +12,8 @@
 #include <optional> // for buffer
 
 namespace NetSim {
+
+enum class ReceiverType { WORKER, STOREHOUSE };
 
 // Forward declaration (ReceiverPreferences uses it)
 class IPackageReceiver;
@@ -58,7 +61,7 @@ class ReceiverPreferences {
      * Returns reference to the map, not copy
      * @return all current links, in "read-only" mode
      */
-    const preferences_t & 
+    const preferences_t &
     get_preferences() const; // & avoids copying the whole map object
 
     // Map iterators
@@ -148,13 +151,10 @@ class IPackageReceiver {
 
     virtual ~IPackageReceiver() = default;
 
-// Conditional method, for further stages
-// #if (defined EXERCISE_ID && EXCERCISE_ID != EXERCISE_ID_NODES)
-//     /**
-//      * @brief Gets the type of a the receiver (Worker or Storehouse)
-//      */
-//     virtual ReceiverType get_receiver_type() const = 0;
-// #endif
+    /**
+     * @brief Gets the type of a the receiver (Worker or Storehouse)
+     */
+    virtual ReceiverType get_receiver_type() const = 0;
 };
 
 /**

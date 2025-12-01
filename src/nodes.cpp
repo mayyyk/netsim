@@ -33,7 +33,8 @@ IPackageReceiver *ReceiverPreferences::choose_receiver() {
 
     // Distribution
     // Iterating till distribution exceeds the probability
-    for (const auto &pair : preferences_) { // reference to the map of preferences
+    for (const auto &pair :
+         preferences_) {             // reference to the map of preferences
         distribution += pair.second; // Accumulating probability
         if (p <= distribution)
             return pair.first;
@@ -116,7 +117,8 @@ TimeOffset Ramp::get_delivery_interval() const { return delivery_interval_; }
 // WORKER
 
 Worker::Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> q)
-    : id_(id), processing_duration_(pd), q_(std::move(q)) {}; // q is a smart pointer, it cannot be coppied, must be moved
+    : id_(id), processing_duration_(pd), q_(std::move(q)) {
+      }; // q is a smart pointer, it cannot be coppied, must be moved
 
 void Worker::receive_package(Package &&p) {
     q_->push(std::move(p)); // Insert incoming package to the queue, not
@@ -143,6 +145,8 @@ void Worker::do_work(Time t) {
     }
 }
 
+ReceiverType Worker::get_receiver_type() const { return ReceiverType::WORKER; }
+
 ElementID Worker::get_id() const { return id_; }
 
 TimeOffset Worker::get_processing_duration() const {
@@ -161,8 +165,14 @@ Worker::const_iterator Worker::cend() const { return q_->cend(); }
 // STOREHOUSE
 
 Storehouse::Storehouse(
-    ElementID id, std::unique_ptr<IPackageStockpile> d) // don't define default argument twice
-    : id_(id), d_(std::move(d)) {} // d_ is a pointer, so then d_->push must be done instead of d.push
+    ElementID id,
+    std::unique_ptr<IPackageStockpile> d) // don't define default argument twice
+    : id_(id), d_(std::move(d)) {
+} // d_ is a pointer, so then d_->push must be done instead of d.push
+
+ReceiverType Storehouse::get_receiver_type() const {
+    return ReceiverType::STOREHOUSE;
+}
 
 void Storehouse::receive_package(Package &&p) { d_->push(std::move(p)); }
 
