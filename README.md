@@ -1,3 +1,10 @@
+(Cannot upload on Upel yet, so doing all at once)
+If needed:
+First stage (Products and their storage) at commit: "storage_types and package done, ready for nodes"
+Secong stage (Nodes)
+Third stage (Factory + IO)
+Forth stage (Simulation)
+
 Precise - rounds logic
 Solid - integrity verification
 Scalable - polimorphism and design patterns
