@@ -24,6 +24,11 @@ namespace NetSim
     using Time = int;
 
     /**
+     * @brief Alias for the time offset
+     */
+    using TimeOffset = int;
+
+    /**
      * @brief 
      */
 } // namespace NetSim
