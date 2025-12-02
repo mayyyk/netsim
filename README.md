@@ -1,3 +1,10 @@
+(Cannot upload on Upel yet, so doing all at once)
+If needed:
+First stage (Products and their storage) at commit: "storage_types and package done, ready for nodes"
+Secong stage (Nodes)
+Third stage (Factory + IO)
+Forth stage (Simulation)
+
 Precise - rounds logic
 Solid - integrity verification
 Scalable - polimorphism and design patterns
@@ -87,5 +94,18 @@ TODO:
 2. Analytic - runs program with net definition and get the report
 
 clear public interface: net building, simulation run, report read
+
+## Commits
+feat - new feature
+fix
+refactor
+docs
+test
+
+## Working
+git checkout main
+git pull origin main          
+git checkout -b .../...
+
 
 ## File structure

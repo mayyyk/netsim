@@ -2,15 +2,19 @@
 
 #pragma once
 
+#include "types.hpp"
 #include <functional>
 #include <random>
 
-#include "types.hpp"
+namespace NetSim {
+/**
+ * @brief Generates pseudo-random numbers in range [0, 1), 10 bits of randomness
+ */
+double default_probability_generator();
 
-extern std::random_device rd;
-extern std::mt19937 rng;
+/**
+ * @brief Declaringglobal object, which is a function
+ */
+extern ProbabilityGenerator probability_generator; // extern means that this function is defined somethere else
 
-extern double default_probability_generator();
-
-extern NetSim::ProbabilityGenerator probability_generator;
-
+} // namespace NetSim

@@ -1,2 +1,11 @@
-- id handling
-- 
+CONSISTENT NAMING:
+- package/product
+
+SET BETTER AUTO FORMATTING
+
+CONDITIONAL COMPILATION?
+
+
+- READ AND CREATE UNDERSTANDABLE TESTS
+- Implement factory.cpp
+- Go to read/write data layer
