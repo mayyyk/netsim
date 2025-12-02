@@ -42,7 +42,7 @@ class NodeCollection {
      * @brief Adds node to the collection (container)
      * Takes ownership (move)
      */
-    void add(Node &&node) { container_.emplace(std::move(node)); }
+    void add(Node &&node) { container_.emplace_back(std::move(node)); }
 
     /**
      * @brief Removes node from the collection (container)
