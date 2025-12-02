@@ -1,5 +1,5 @@
 #include "../include/storage_types.hpp"
-
+#include <stdexcept> // for throwing runtime_error
 namespace NetSim
 {
 
@@ -28,19 +28,27 @@ namespace NetSim
 
     Package PackageQueue::pop()
     {
-        Package p; // to temporarily store front element of deque_, so we can clean the memory
-
-        if (queue_type_ == PackageQueueType::FIFO)
+        switch (queue_type_)
         {
-            p = std::move(deque_.front()); // Content of the deque_.front is now in "p" but deque_.front still exist (as an empty container)
-            deque_.pop_front(); // Remove the empty container
+        case PackageQueueType::FIFO:
+        {
+            Package p = std::move(deque_.front()); // Content of the deque_.front is now in "p" but deque_.front still exist (as an empty container)
+            deque_.pop_front();                    // Remove the empty container
+            return p;
         }
-        else if (queue_type_ == PackageQueueType::LIFO)
+        case PackageQueueType::LIFO:
         {
-            p = std::move(deque_.back());
+            Package p = std::move(deque_.back());
             deque_.pop_back();
+            return p;
         }
-
-        return p;
+        default:
+            throw std::runtime_error("Unknown queue type.");
+        }
     }
+    // Iterators implementation
+    IPackageStockpile::const_iterator PackageQueue::begin() const { return deque_.begin(); }
+    IPackageStockpile::const_iterator PackageQueue::end() const { return deque_.end(); }
+    IPackageStockpile::const_iterator PackageQueue::cbegin() const { return deque_.cbegin(); }
+    IPackageStockpile::const_iterator PackageQueue::cend() const { return deque_.cend(); }
 } // namespace NetSim

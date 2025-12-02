@@ -11,14 +11,14 @@ namespace NetSim
             id_ = *freed_ids_.begin();
             freed_ids_.erase(freed_ids_.begin());
         } else {
-            id_ = (assigned_ids_.empty()) ? 1 : (*assigned_ids_.rbegin()+1);
+            id_ = (assigned_ids_.empty()) ? 1 : (*assigned_ids_.rbegin()+1); // 'rbegin' returns the highest number, 'end' would point behind the highest number
         }
         assigned_ids_.insert(id_);
     }
 
     Package::Package(ElementID id) : id_(id)
     {
-        assigned_ids_.insert(id_);
+        assigned_ids_.insert(id_); // id_ not id as a form of reassurence that it was correctly assigned in the initialization list
         freed_ids_.erase(id);
     }
 

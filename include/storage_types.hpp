@@ -23,8 +23,11 @@ namespace NetSim
      */
     class IPackageStockpile
     {
-    public:
 
+    public:
+        // Defining iterator alias based on deque - decision argumented in 'docs/adr/00-deque.md'
+        using const_iterator = std::deque<Package>::const_iterator;
+        
         // Constructor is not needed for the interface as it's purely virual and never initialized
 
         /**
@@ -48,6 +51,13 @@ namespace NetSim
          * @brief Return the amount of elements in a container (size_t is preferred type for sizes)
          */
         virtual size_t size() const = 0;
+
+        // Iterator methods (for reporting)
+        
+        virtual const_iterator begin() const = 0;
+        virtual const_iterator end() const = 0;
+        virtual const_iterator cbegin() const = 0;
+        virtual const_iterator cend() const = 0;
     };
 
     /**
@@ -88,12 +98,19 @@ namespace NetSim
         explicit PackageQueue(PackageQueueType type); // explicit block type conversion, so that constructor allows only PackageQueueType as an argument
 
         void push(Package&& package) override; // Package&& so content of the package is fully moved, not just coppied
-        bool empty() const override;y
+        bool empty() const override;
         size_t size() const override;
         Package pop() override;
         PackageQueueType get_queue_type() const override;
 
-        ~PackageQueue() override = default; // Name is different form IPackageQueue but 
+        // Iterator methods implementation
+
+        const_iterator begin() const override;
+        const_iterator end() const override;
+        const_iterator cbegin() const override;
+        const_iterator cend() const override;
+
+        ~PackageQueue() override = default; // Name is different form IPackageQueue but
 
     private:
         PackageQueueType queue_type_;
