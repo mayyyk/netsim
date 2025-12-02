@@ -88,7 +88,7 @@ namespace NetSim
         explicit PackageQueue(PackageQueueType type); // explicit block type conversion, so that constructor allows only PackageQueueType as an argument
 
         void push(Package&& package) override; // Package&& so content of the package is fully moved, not just coppied
-        bool empty() const override;
+        bool empty() const override;y
         size_t size() const override;
         Package pop() override;
         PackageQueueType get_queue_type() const override;
