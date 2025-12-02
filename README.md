@@ -95,4 +95,17 @@ TODO:
 
 clear public interface: net building, simulation run, report read
 
+## Commits
+feat - new feature
+fix
+refactor
+docs
+test
+
+## Working
+git checkout main
+git pull origin main          
+git checkout -b .../...
+
+
 ## File structure

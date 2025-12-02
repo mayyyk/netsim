@@ -1,0 +1,23 @@
+name: NetSim CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Google Test
+      run: sudo apt-get install -y libgtest-dev libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+
+    - name: Compile Tests
+      run: g++ -std=c++17 -I include test/main_gtest.cpp src/package.cpp src/storage_types.cpp src/nodes.cpp src/helpers.cpp src/factory.cpp -lgtest -lgtest_main -lpthread -o run_gtest
+
+    - name: Run Tests
+      run: ./run_gtest
