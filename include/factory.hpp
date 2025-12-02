@@ -62,7 +62,7 @@ class NodeCollection {
     iterator find_by_id(ElementID id) {
         return std::find_if(
             container_.begin(), container_.end(),
-            [](const Node &node) { return node.get_id() == id; });
+            [id](const Node &node) { return node.get_id() == id; });
     }
 
     /**
@@ -72,7 +72,7 @@ class NodeCollection {
     const_iterator find_by_id(ElementID id) const {
         return std::find_if(
             container_.cbegin(), container_.cend(),
-            [](const Node &node) { return node.get_id() == id; });
+            [id](const Node &node) { return node.get_id() == id; });
     }
 
   private:
