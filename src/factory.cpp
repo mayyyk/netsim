@@ -31,4 +31,54 @@ enum class NodeColor { UNVISITED, VISITED, VERIFIED };
 //     return true;
 // }
 
+void Factory::do_deliveries(Time t) {
+    for (auto &ramp : ramps_) {
+        ramp.deliver_goods(t);
+    }
+}
+
+void Factory::do_package_passing() {
+    for (auto &ramp : ramps_) {
+        ramp.send_package();
+    }
+
+    for (auto &worker : workers_) {
+        worker.send_package();
+    }
+}
+
+void Factory::do_work(Time t) {
+    for (auto &worker : workers_) {
+        worker.do_work(t);
+    }
+}
+
+void Factory::remove_worker(ElementID id) {
+    auto it = workers_.find_by_id(id);
+    if (it == workers_.end())
+        return;
+
+    Worker *worker_to_remove =
+        &(*it); // changing smart pointer (iterator) to an ordinary pointer
+
+    remove_receiver_from_senders(ramps_, worker_to_remove);
+
+    remove_receiver_from_senders(workers_, worker_to_remove);
+
+    workers_.remove_by_id(id);
+}
+
+void Factory::remove_storehouse(ElementID id) {
+    auto it = storehouses_.find_by_id(id);
+    if (it == storehouses_.end())
+        return;
+
+    Storehouse *store_to_remove = &(*it);
+
+    remove_receiver_from_senders(ramps_, store_to_remove);
+    remove_receiver_from_senders(workers_, store_to_remove);
+
+    storehouses_.remove_by_id(id);
+}
+
 } // namespace NetSim

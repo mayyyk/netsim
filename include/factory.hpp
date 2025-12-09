@@ -229,13 +229,17 @@ class Factory {
     void do_work(Time t);
 
   private:
-    template <typename Node>
-
     /**
      * @brief Helper function for removing receiver from receiver_preverence
      * lists of other senders
      */
-    void remove_receiver(NodeCollection<Node> &collection, ElementID id);
+    template <typename Node>
+    void remove_receiver_from_senders(NodeCollection<Node> &senders,
+                                      IPackageReceiver *receiver) {
+        for (auto &sender : senders) {
+            sender.get_receiver_preferences().remove_receiver(receiver);
+        }
+    }
 
     NodeCollection<Ramp> ramps_;
     NodeCollection<Worker> workers_;
