@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "nodes.hpp"
-#include "types.hpp" // REMEMBER TO INCLUDE TYPES WHERE NEEDED
+#include "types.hpp" // INCLUDE TYPES WHERE NEEDED
 namespace NetSim {
 /**
  * @brief Template for nodes collection
