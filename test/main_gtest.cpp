@@ -1,8 +1,11 @@
-#include <gtest/gtest.h>
-#include "package.hpp"
-#include "storage_types.hpp"
-#include "nodes.hpp"
+#include "factory.hpp"
 #include "helpers.hpp"
+#include "nodes.hpp"
+#include "package.hpp"
+#include "reports.hpp"
+#include "simulation.hpp"
+#include "storage_types.hpp"
+#include <gtest/gtest.h>
 
 using namespace NetSim;
 
@@ -42,22 +45,18 @@ TEST(PackageQueueTest, LIFO_Order) {
 
 // Helper for testing PackageSender (access to protected members)
 class TestSender : public PackageSender {
-public:
+  public:
     // Wrapper exposing the push_package method
-    void push_package_public(Package&& p) {
-        push_package(std::move(p));
-    }
+    void push_package_public(Package &&p) { push_package(std::move(p)); }
     // Check if buffer is empty
-    bool is_buffer_empty() const {
-        return !buffer_.has_value();
-    }
+    bool is_buffer_empty() const { return !buffer_.has_value(); }
 };
 
 TEST(PackageSenderTest, BufferClearedAfterSend) {
     TestSender sender;
-    
+
     // Create a "Mock" receiver so the sender has somewhere to send to
-    Storehouse receiver(1); 
+    Storehouse receiver(1);
     sender.get_receiver_preferences().add_receiver(&receiver);
 
     // Insert a package
@@ -100,13 +99,13 @@ TEST(ReceiverPreferencesTest, MockedGeneratorSelection) {
     prefs.add_receiver(&s2); // range (0.5, 1.0]
 
     // For value 0.3, we should hit the first range (s1)
-    IPackageReceiver* selected = prefs.choose_receiver();
+    IPackageReceiver *selected = prefs.choose_receiver();
     EXPECT_EQ(selected, &s1);
 }
 
 TEST(RampTest, DeliveryInCorrectRound) {
     // Ramp delivers every 2 rounds (interval 2)
-    Ramp ramp(1, 2); 
+    Ramp ramp(1, 2);
     Storehouse receiver(1);
     ramp.get_receiver_preferences().add_receiver(&receiver);
 
@@ -120,7 +119,7 @@ TEST(RampTest, DeliveryInCorrectRound) {
     Storehouse receiver2(2);
     ramp.get_receiver_preferences().remove_receiver(&receiver);
     ramp.get_receiver_preferences().add_receiver(&receiver2);
-    
+
     ramp.deliver_goods(2);
     ramp.send_package();
     EXPECT_TRUE(receiver2.begin() == receiver2.end()); // Storehouse empty
@@ -136,16 +135,16 @@ TEST(WorkerTest, ProcessingDurationAndForwarding) {
     worker.receive_package(Package(50));
 
     // Round 1: Takes package in hand (start of work)
-    worker.do_work(1); 
+    worker.do_work(1);
     // Nothing should be sent, because work takes 2 rounds
-    worker.send_package(); 
+    worker.send_package();
     EXPECT_TRUE(store.begin() == store.end()); // Storehouse empty
 
     // Round 2: Finishes work (1 + 2 - 1 = 2)
     worker.do_work(2);
     // Now the package should be in the worker's outgoing buffer. Sending.
     worker.send_package();
-    
+
     // Check if it arrived
     ASSERT_FALSE(store.begin() == store.end());
     EXPECT_EQ(store.begin()->get_id(), 50);
@@ -163,4 +162,41 @@ TEST(StorehouseTest, ReceivingPackage) {
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
+}
+
+// --- FACTORY TESTS ---
+
+TEST(FactoryTest, RemoveReceiverCleansUpConnections) {
+    Factory factory;
+    // Struktura: Rampa(1) -> Worker(2) -> Storehouse(3)
+    factory.add_ramp(Ramp(1, 1));
+    factory.add_worker(
+        Worker(2, 1, std::make_unique<PackageQueue>(PackageQueueType::FIFO)));
+    factory.add_storehouse(Storehouse(3));
+
+    auto &ramp = *factory.find_ramp_by_id(1);
+    auto &worker = *factory.find_worker_by_id(2);
+    auto &store = *factory.find_storehouse_by_id(3);
+
+    // Tworzymy połączenia
+    ramp.get_receiver_preferences().add_receiver(&worker);
+    worker.get_receiver_preferences().add_receiver(&store);
+
+    // TEST 1: Usunięcie Workera powinno wyczyścić go z preferencji Rampy
+    factory.remove_worker(2);
+
+    // Sprawdzamy czy rampa jest teraz "osierocona"
+    EXPECT_TRUE(ramp.get_receiver_preferences().get_preferences().empty());
+
+    // Odtwórzmy workera dla drugiego testu (Storehouse)
+    factory.add_worker(
+        Worker(4, 1, std::make_unique<PackageQueue>(PackageQueueType::FIFO)));
+    auto &new_worker = *factory.find_worker_by_id(4);
+    new_worker.get_receiver_preferences().add_receiver(&store);
+
+    // TEST 2: Usunięcie Storehouse powinno wyczyścić go z preferencji Workera
+    factory.remove_storehouse(3);
+
+    EXPECT_TRUE(
+        new_worker.get_receiver_preferences().get_preferences().empty());
 }
