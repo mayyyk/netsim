@@ -17,7 +17,7 @@ void simulate(Factory &f, Time rounds,
 
         f.do_work(t);
 
-        // rf(f,t);
+        //rf(f,t);
     }
 }   
 
