@@ -4,19 +4,18 @@ namespace NetSim {
 
 // helper function for sorting receivers by type and ID
 void sort_receivers(std::vector<IPackageReceiver *> receivers) {
-std:
-    sort(receivers.begin(), receivers.end(),
-         [](IPackageReceiver *a, IPackageReceiver *b) {
-             // FIRST CRITERION
-             // check if they are different types
-             // final order is: worker > storehouse
-             if (a->get_receiver_type() != b->get_receiver_type()) {
-                 return a->get_receiver_type() < b->get_receiver_type();
-             }
+    std::sort(receivers.begin(), receivers.end(),
+              [](IPackageReceiver *a, IPackageReceiver *b) {
+                  // FIRST CRITERION
+                  // check if they are different types
+                  // final order is: worker > storehouse
+                  if (a->get_receiver_type() != b->get_receiver_type()) {
+                      return a->get_receiver_type() < b->get_receiver_type();
+                  }
 
-             // SECOND CRITERION
-             return a->get_id() < b->get_id();
-         });
+                  // SECOND CRITERION
+                  return a->get_id() < b->get_id();
+              });
 }
 
 // STRUCTURE REPORT
