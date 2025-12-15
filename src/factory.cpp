@@ -39,29 +39,79 @@ enum class NodeColor { UNVISITED, VISITED, VERIFIED };
 
 // FACTORY IMPLEMENTATION
 
-// bool has_reachable_storehouse() {}
+bool has_reachable_storehouse(const PackageSender* sender, std::map<const PackageSender*, NodeColor>& node_colors){
+    if(node_colors[sender] == NodeColor::VERIFIED) return true;
 
-// bool Factory::is_consistent() {
-//     std::map<PackageSender *, NodeColor> node_colors;
+    node_colors[sender] = NodeColor::VISITED;
 
-//     // Initializing colors for Workers and Ramps - all sending nodes
-//     for (const auto &ramp : ramps_) {
-//         node_colors[&ramp] = NodeColor::UNVISITED;
-//     }
-//     for (const auto &worker : workers_) {
-//         node_colors[&worker] = NodeColor::UNVISITED;
-//     }
+    if (sender->get_receiver_preferences().get_preferences().empty()) { // sender is a pointer, so "->" must be used and then getter get_preferences on ReceiverPreferences object
+        throw std::logic_error("There are no receivers defined for this sender.");
+    }
 
-//     try {
-//         for (const auto &ramp : ramps_) {
-//             has_reachable_storehouse(&ramp, node_colors);
-//         }
-//     } catch (const std::logic_error &e) {
-//         return false;
-//     }
+    bool has_other_than_self = false;
+    bool storehouse_reachable = false;
 
-//     return true;
-// }
+    // receivers iteration
+    for (const auto& pair : sender->get_receiver_preferences()) { 
+        IPackageReceiver* receiver_ptr = pair.first;
+        // pair.second is probability, not needed here
+
+        ReceiverType type = receiver_ptr->get_receiver_type();
+
+        if (type==ReceiverType::STOREHOUSE) {
+            has_other_than_self = true;
+            storehouse_reachable = true;
+        } else if (type==ReceiverType::WORKER) {
+            Worker* worker_ptr = dynamic_cast<Worker*>(receiver_ptr); // downcasting 
+            const PackageSender* sendrecv_ptr = dynamic_cast<const PackageSender*>(worker_ptr); // upcasting
+
+            // check if it's not sending to itself
+            if (sendrecv_ptr == sender) { 
+                continue;
+            }
+
+            has_other_than_self = true;
+
+            // Recursive 
+            if (node_colors[sendrecv_ptr] == NodeColor::UNVISITED){
+                has_reachable_storehouse(sendrecv_ptr, node_colors);
+            }
+        }
+
+    }
+
+
+    node_colors[sender] = NodeColor::VERIFIED;
+
+    // Final decision
+    if (has_other_than_self) {
+        return true;
+    } else {
+        throw std::logic_error("Sender has no reachable storehouse.");
+    }
+}
+
+bool Factory::is_consistent() {
+    std::map<PackageSender *, NodeColor> node_colors;
+
+    // Initializing colors for Workers and Ramps - all sending nodes
+    for (const auto &ramp : ramps_) {
+        node_colors[&ramp] = NodeColor::UNVISITED;
+    }
+    for (const auto &worker : workers_) {
+        node_colors[&worker] = NodeColor::UNVISITED;
+    }
+
+    try {
+        for (const auto &ramp : ramps_) {
+            has_reachable_storehouse(&ramp, node_colors);
+        }
+    } catch (const std::logic_error &e) {
+        return false;
+    }
+
+    return true;
+}
 
 void Factory::do_deliveries(Time t) {
     for (auto &ramp : ramps_) {
