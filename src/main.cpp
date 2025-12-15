@@ -36,7 +36,7 @@ int main() {
     // Warning (remember that IDs must be different from these in the input
     // file!!!)
 
-    // factory.add_storehouse(Storehouse(3));
+    // factory.add_storehouse(Storehouse(1));
 
     // === FACTORY STRUCTURE CREATION FINISHED ===
 
