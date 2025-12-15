@@ -1,5 +1,60 @@
-.vscode
+# Prerequisites
+*.d
 
-run_tests
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
 
-run_gtest
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CMake build folder (bardzo ważne!)
+build/
+cmake-build-*/
+out/
+
+# CMake artifacts in root (just in case)
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# VS Code settings
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db

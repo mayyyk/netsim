@@ -207,8 +207,6 @@ TEST(FactoryTest, RemoveReceiverCleansUpConnections) {
         new_worker.get_receiver_preferences().get_preferences().empty());
 }
 
-/* * NETWORK CONSISTENCY TESTS (Uncomment after implementing is_consistent)
- *
 TEST(FactoryTest, NetworkConsistency) {
     Factory factory;
     factory.add_ramp(Ramp(1, 1));
@@ -236,7 +234,7 @@ TEST(FactoryTest, NetworkConsistency) {
     ramp.get_receiver_preferences().add_receiver(&store);
     EXPECT_TRUE(factory.is_consistent());
 }
-*/
+
 
 // ============================================================================
 //                             SIMULATION TESTS
