@@ -58,3 +58,7 @@ _deps/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# reports
+network_simulation_states.txt
+network_structure_report.txt

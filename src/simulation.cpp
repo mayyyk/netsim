@@ -10,7 +10,7 @@ void simulate(Factory &f, Time rounds,
     }
 
     // MAIN SIMULATION LOOP
-    for (Time t = 0; t < rounds; t++) { // to check if <= or <
+    for (Time t = 1; t <= rounds; t++) { // to check if <= or <
         f.do_deliveries(t);
 
         f.do_package_passing();
