@@ -33,12 +33,10 @@ int main() {
     }
 
     // MANUAL FACTORY STRUCTURE MODIFICATION
-    // Warning (remember that IDs must be different from these in the input file!!!)
+    // Warning (remember that IDs must be different from these in the input
+    // file!!!)
 
-    factory.add_storehouse(Storehouse(3));
-    
-
-
+    // factory.add_storehouse(Storehouse(3));
 
     // === FACTORY STRUCTURE CREATION FINISHED ===
 
@@ -86,6 +84,8 @@ int main() {
             }
         });
 
+    } catch (const std::invalid_argument &e) {
+        std::cerr << "Failed to add a node: " << e.what() << std::endl;
     } catch (const std::logic_error &e) {
         std::cerr << "Simulation failed!" << e.what() << std::endl;
         return 1;
