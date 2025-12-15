@@ -49,7 +49,7 @@ bool has_reachable_storehouse(const PackageSender* sender, std::map<const Packag
     }
 
     bool has_other_than_self = false;
-    bool storehouse_reachable = false;
+    // bool storehouse_reachable = false; not needed
 
     // receivers iteration
     for (const auto& pair : sender->get_receiver_preferences()) { 
@@ -60,10 +60,11 @@ bool has_reachable_storehouse(const PackageSender* sender, std::map<const Packag
 
         if (type==ReceiverType::STOREHOUSE) {
             has_other_than_self = true;
-            storehouse_reachable = true;
+            // storehouse_reachable = true;
         } else if (type==ReceiverType::WORKER) {
-            Worker* worker_ptr = dynamic_cast<Worker*>(receiver_ptr); // downcasting 
-            const PackageSender* sendrecv_ptr = dynamic_cast<const PackageSender*>(worker_ptr); // upcasting
+            Worker* worker_ptr = dynamic_cast<Worker*>(receiver_ptr); // downcasting to enable also sender methods on a worker, by default it's just a IPackageReceiver pointer
+            const PackageSender* sendrecv_ptr = dynamic_cast<const PackageSender*>(worker_ptr); // upcasting to pass it to the has_reachable_storehouse as a sender (so it can get its preferences)
+            // there's no direct way between IPackageReceiver and PackageSender
 
             // check if it's not sending to itself
             if (sendrecv_ptr == sender) { 
@@ -75,11 +76,10 @@ bool has_reachable_storehouse(const PackageSender* sender, std::map<const Packag
             // Recursive 
             if (node_colors[sendrecv_ptr] == NodeColor::UNVISITED){
                 has_reachable_storehouse(sendrecv_ptr, node_colors);
-            }
+            } // if the neighbour is verified ti means that there's a way to a storehouse - it optimizes the algorithm
         }
 
     }
-
 
     node_colors[sender] = NodeColor::VERIFIED;
 
@@ -170,7 +170,7 @@ Factory load_factory_structure(std::istream &is) {
     std::string line;
 
     while (std::getline(is, line)) {
-        if (line.empty() || line[0] == ';', line[0] == '#')
+        if (line.empty() || line[0] == ';' || line[0] == '#')
             continue;
 
         ParsedLineData data = parse_line(line);
