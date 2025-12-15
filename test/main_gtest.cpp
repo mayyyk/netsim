@@ -275,7 +275,7 @@ TEST(SimulationTest, SimulationLoopExecution) {
     };
 
     // Run for 5 turns
-    simulate(f, 5, report_func);
+    simulate(f, 5, report_func); // passing report_func that's just called at the end of each round
 
     EXPECT_EQ(report_count, 5);
 }

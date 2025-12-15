@@ -245,7 +245,7 @@ class Worker : public PackageSender, public IPackageReceiver {
     /**
      * @brief Gets product processing start time
      */
-    Time get_product_processing_start_time() const;
+    Time get_package_processing_start_time() const;
 
     /**
      * @brief Gets worker queue

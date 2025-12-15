@@ -153,7 +153,7 @@ TimeOffset Worker::get_processing_duration() const {
     return processing_duration_;
 }
 
-Time Worker::get_product_processing_start_time() const {
+Time Worker::get_package_processing_start_time() const {
     return package_processing_start_time_;
 }
 

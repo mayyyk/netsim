@@ -10,15 +10,17 @@ void simulate(Factory &f, Time rounds,
     // }
 
     // MAIN SIMULATION LOOP
-    for (Time t = 0; t <= rounds; t++) {
+    for (Time t = 0; t < rounds; t++) { // to check if <= or <
         f.do_deliveries(t);
 
         f.do_package_passing();
 
         f.do_work(t);
 
-        //rf(f,t);
+        if (rf) { // rf may be empty, so it's safer to check
+            rf(f, t);
+        }
     }
-}   
+}
 
 } // namespace NetSim
