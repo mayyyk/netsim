@@ -92,7 +92,7 @@ bool has_reachable_storehouse(const PackageSender* sender, std::map<const Packag
 }
 
 bool Factory::is_consistent() {
-    std::map<PackageSender *, NodeColor> node_colors;
+    std::map<const PackageSender *, NodeColor> node_colors;
 
     // Initializing colors for Workers and Ramps - all sending nodes
     for (const auto &ramp : ramps_) {
