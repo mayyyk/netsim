@@ -17,7 +17,7 @@ class SpecificRoundsReportNotifier {
     /**
      * @brief Constructor
      */
-    explicit SpecificRoundsReportNotifier(std::set<Time> rounds);
+    explicit SpecificRoundsReportNotifier(std::set<Time> turns);
 
     /**
      * @brief Decides if a report should be generated at current round
@@ -25,7 +25,7 @@ class SpecificRoundsReportNotifier {
     bool should_generate_report(Time t) const;
 
   private:
-    std::set<Time> rounds_;
+    std::set<Time> turns_;
 };
 
 /**
@@ -42,9 +42,9 @@ class IntervalReportNotifier {
 
 // REPORTING FUNCTIONS
 
-void generate_structure_report(const Factory &f, std::ostream &oss);
+void generate_structure_report(const Factory &f, std::ostream &os);
 
-void generate_simulation_turn_report(const Factory &f, std::ostream &oss,
+void generate_simulation_turn_report(const Factory &f, std::ostream &os,
                                      Time t);
 
 } // namespace NetSim
