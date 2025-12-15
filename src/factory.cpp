@@ -14,15 +14,22 @@ struct ParsedLineData {
     std::map<std::string, std::string> parameters;
 };
 
+// helper function for separating KEY=VALUE elements in lines
 ParsedLineData parse_line(const std::string &line) {
     ParsedLineData data; // create a struct instance
 
-    std::istringstream iss(line);
-    std::string token;
+    std::istringstream iss(line); // reads to the first whitespace
+    std::string token; // for storing next tokens (non-separated words) in the 'line'
 
     iss >> data.element_type; // first world is an element type
 
-    while (iss >> token) {
+    while (iss >> token) { // as long as there's something left in the iss that gets passes to the TOKEN
+        size_t eq_pos = token.find("=");
+        if(eq_pos != std::string::npos) {
+            std::string key = token.substr(0, eq_pos);
+            std::string value = token.substr(eq_pos + 1);
+            data.parameters[key] = value;
+        }
     }
     return data;
 }

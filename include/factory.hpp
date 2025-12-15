@@ -228,12 +228,6 @@ class Factory {
      */
     void do_work(Time t);
 
-    // INPUT / OUTPUT FUNCTIONS
-
-    Factory load_factory_structure(std::istream& is);
-
-    void save_factory_structure(Factory& factory, std::ostream& os);
-    
   private:
     /**
      * @brief Helper function for removing receiver from receiver_preverence
@@ -251,4 +245,10 @@ class Factory {
     NodeCollection<Worker> workers_;
     NodeCollection<Storehouse> storehouses_;
 };
+
+// INPUT / OUTPUT FUNCTIONS
+
+Factory load_factory_structure(std::istream &is);
+
+void save_factory_structure(Factory &factory, std::ostream &os);
 } // namespace NetSim
