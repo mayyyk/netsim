@@ -19,6 +19,6 @@ void simulate(Factory &f, Time rounds,
 
         // rf(f,t);
     }
-}
+}   
 
 } // namespace NetSim

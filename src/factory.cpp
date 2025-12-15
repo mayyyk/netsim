@@ -1,6 +1,31 @@
 #include "../include/factory.hpp"
 #include <iostream>
+#include <map>
+#include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
+
+// PARSING HELPER FUNCTIONS
+// Outside of NetSim namespace and hpp files because implementation is not
+// needed to know for the library user
+struct ParsedLineData {
+    std::string element_type;
+    std::map<std::string, std::string> parameters;
+};
+
+ParsedLineData parse_line(const std::string &line) {
+    ParsedLineData data; // create a struct instance
+
+    std::istringstream iss(line);
+    std::string token;
+
+    iss >> data.element_type; // first world is an element type
+
+    while (iss >> token) {
+    }
+    return data;
+}
 
 namespace NetSim {
 enum class NodeColor { UNVISITED, VISITED, VERIFIED };
@@ -79,6 +104,10 @@ void Factory::remove_storehouse(ElementID id) {
     remove_receiver_from_senders(workers_, store_to_remove);
 
     storehouses_.remove_by_id(id);
+
+    // LOAD / SAVE IMPLEMENTATION
+
+    Factory load_factory_structure(std::istream & is) {}
 }
 
 } // namespace NetSim
