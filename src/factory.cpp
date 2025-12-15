@@ -177,6 +177,61 @@ Factory load_factory_structure(std::istream &is) {
     return factory;
 }
 
-void save_factory_structure(Factory &factory, std::ostream &os) {}
+void save_factory_structure(Factory &factory, std::ostream &os) {
+    // SAVE RAMPS
+
+    for (auto it = factory.ramp_cbegin(); it != factory.ramp_cend();
+         it++) // const methods because it's read-only function
+    {
+        os << "LOADING_RAMP id=" << it->get_id()
+           << " delivery-interval=" << it->get_delivery_interval() << "\n";
+    }
+
+    // SAVE WORKERS
+    for (auto it = factory.worker_cbegin(); it != factory.worker_cend(); ++it) {
+        std::string q_type =
+            (it->get_queue()->get_queue_type() == PackageQueueType::FIFO)
+                ? "FIFO"
+                : "LIFO";
+        os << "WORKER id=" << it->get_id()
+           << " processing-time=" << it->get_processing_duration()
+           << " queue-type=" << q_type << "\n";
+    }
+
+    // SAVE STOREHOUSES
+    for (auto it = factory.storehouse_cbegin(); it != factory.storehouse_cend();
+         ++it) {
+        os << "STOREHOUSE id=" << it->get_id() << "\n";
+    }
+
+    // SAVE LINKS
+
+    // iterating through package senders
+    auto save_links = [&](const PackageSender &sender, std::string src_prefix,
+                          ElementID src_id) {
+        for (const auto &[receiver,
+                          prob] : // alias for preferences_ map:
+                                  // std::map<IPackageReceiver *, double>
+             sender.get_receiver_preferences().get_preferences()) {
+            std::string dest_prefix;
+            if (receiver->get_receiver_type() == ReceiverType::WORKER)
+                dest_prefix = "worker";
+            else
+                dest_prefix = "store";
+
+            os << "LINK src=" << src_prefix << "-" << src_id
+               << " dest=" << dest_prefix << "-" << receiver->get_id() << "\n";
+        }
+    };
+
+    for (auto it = factory.ramp_cbegin(); it != factory.ramp_cend(); it++) {
+        save_links(*it, "ramp",
+                   it->get_id()); // passing a dereferenced pointer which then
+                                  // is aliased with 'sender' in lambda function
+    }
+    for (auto it = factory.worker_cbegin(); it != factory.worker_cend(); ++it) {
+        save_links(*it, "worker", it->get_id());
+    }
+}
 
 } // namespace NetSim
