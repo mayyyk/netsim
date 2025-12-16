@@ -105,6 +105,12 @@ class PackageSender {
     // Non-const version to be able to modify
     ReceiverPreferences &get_receiver_preferences();
 
+    /**
+     * @brief Gets package sender sending buffer
+     * Implemented directly in header file since it's one-liner
+     */
+    const std::optional<Package> &get_sending_buffer() const { return buffer_; }
+
     // No destructor since both 'std::optional<Package>' and
     // 'ReceiverPreferences' are intelligent and clean up after themselves
 
@@ -239,7 +245,19 @@ class Worker : public PackageSender, public IPackageReceiver {
     /**
      * @brief Gets product processing start time
      */
-    Time get_product_processing_start_time() const;
+    Time get_package_processing_start_time() const;
+
+    /**
+     * @brief Gets worker queue
+     */
+    IPackageQueue *get_queue() const { return q_.get(); } // get a raw pointer from smart pointer box (which is q_)
+
+    /**
+     * @brief Gets worker processing buffer
+     */
+    const std::optional<Package> &get_processing_buffer() const {
+        return processing_buffer_;
+    }
 
     // ITERATORS
     const_iterator begin() const override;

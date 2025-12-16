@@ -1,0 +1,26 @@
+#include "../include/simulation.hpp"
+#include <stdexcept>
+
+namespace NetSim {
+void simulate(Factory &f, Time rounds,
+              std::function<void(Factory &, Time)> rf) {
+
+    if (!f.is_consistent()) {
+        throw std::logic_error("Network is not consistent!");
+    }
+
+    // MAIN SIMULATION LOOP
+    for (Time t = 1; t <= rounds; t++) { // to check if <= or <
+        f.do_deliveries(t);
+
+        f.do_package_passing();
+
+        f.do_work(t);
+
+        if (rf) { // rf may be empty, so it's safer to check
+            rf(f, t);
+        }
+    }
+}
+
+} // namespace NetSim

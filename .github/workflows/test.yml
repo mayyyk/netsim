@@ -13,11 +13,27 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Google Test
-      run: sudo apt-get install -y libgtest-dev libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+    # Install GTest and CMake (just to be sure)
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtest-dev cmake
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp lib/*.a /usr/lib
+        
+    # Project config (Generate makefiles)
+    - name: Configure CMake
+      run: cmake -B build -S .
 
-    - name: Compile Tests
-      run: g++ -std=c++17 -I include test/main_gtest.cpp src/package.cpp src/storage_types.cpp src/nodes.cpp src/helpers.cpp src/factory.cpp -lgtest -lgtest_main -lpthread -o run_gtest
+    # Project build (Compile)
+    - name: Build
+      run: cmake --build build
 
+    # Run tests
+    # --output-on-failure shows log only if tests fail
     - name: Run Tests
-      run: ./run_gtest
+      run: |
+        cd build
+        ctest --output-on-failure

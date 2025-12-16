@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "nodes.hpp"
-#include "types.hpp" // REMEMBER TO INCLUDE TYPES WHERE NEEDED
+#include "types.hpp" // INCLUDE TYPES WHERE NEEDED
 namespace NetSim {
 /**
  * @brief Template for nodes collection
@@ -90,7 +90,15 @@ class Factory {
     /**
      * @brief Adds ramp to the Net
      */
-    void add_ramp(Ramp &&r) { ramps_.add(std::move(r)); }
+    void add_ramp(Ramp &&r) {
+        // Check for existing ID
+        if (ramps_.find_by_id(r.get_id()) != ramps_.end()) {
+            throw std::invalid_argument("Ramp with ID " +
+                                        std::to_string(r.get_id()) +
+                                        " already exists.");
+        }
+        ramps_.add(std::move(r));
+    }
 
     /**
      * @brief Removes ramp from the Net
@@ -128,7 +136,14 @@ class Factory {
     /**
      * @brief Adds worker to the Net
      */
-    void add_worker(Worker &&w) { workers_.add(std::move(w)); }
+    void add_worker(Worker &&w) {
+        if (workers_.find_by_id(w.get_id()) != workers_.end()) {
+            throw std::invalid_argument("Worker with ID " +
+                                        std::to_string(w.get_id()) +
+                                        " already exists.");
+        }
+        workers_.add(std::move(w));
+    }
 
     /**
      * @brief Removes worker from the Net
@@ -168,7 +183,14 @@ class Factory {
     /**
      * @brief Adds storehouse to the Net
      */
-    void add_storehouse(Storehouse &&s) { storehouses_.add(std::move(s)); }
+    void add_storehouse(Storehouse &&s) {
+        if (storehouses_.find_by_id(s.get_id()) != storehouses_.end()) {
+            throw std::invalid_argument("Storehouse with ID " +
+                                        std::to_string(s.get_id()) +
+                                        " already exists.");
+        }
+        storehouses_.add(std::move(s));
+    }
 
     /**
      * @brief Removes storehouse from the Net
@@ -229,16 +251,26 @@ class Factory {
     void do_work(Time t);
 
   private:
-    template <typename Node>
-
     /**
      * @brief Helper function for removing receiver from receiver_preverence
      * lists of other senders
      */
-    void remove_receiver(NodeCollection<Node> &collection, ElementID id);
+    template <typename Node>
+    void remove_receiver_from_senders(NodeCollection<Node> &senders,
+                                      IPackageReceiver *receiver) {
+        for (auto &sender : senders) {
+            sender.get_receiver_preferences().remove_receiver(receiver);
+        }
+    }
 
     NodeCollection<Ramp> ramps_;
     NodeCollection<Worker> workers_;
     NodeCollection<Storehouse> storehouses_;
 };
+
+// INPUT / OUTPUT FUNCTIONS
+
+Factory load_factory_structure(std::istream &is);
+
+void save_factory_structure(Factory &factory, std::ostream &os);
 } // namespace NetSim
